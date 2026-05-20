@@ -1,10 +1,6 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+import pickle
 import time
 
 # ============================================================
@@ -19,26 +15,15 @@ def load_css(file_name):
 load_css("style.css")
 
 # ============================================================
-# DONNÉES + MODÈLES
+# CHARGER LE MODÈLE PKL
 # ============================================================
-@st.cache_data
-def load_and_train():
-    df = pd.read_csv('diabetes.csv')
-    cols = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
-    df[cols] = df[cols].replace(0, np.nan)
-    df[cols] = df[cols].fillna(df[cols].mean())
-    X = df.drop('Outcome', axis=1)
-    y = df['Outcome']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    lr = LogisticRegression(random_state=42, class_weight='balanced')
-    rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
-    gb = GradientBoostingClassifier(n_estimators=100, random_state=42)
-    lr.fit(X_train, y_train); acc_lr = accuracy_score(y_test, lr.predict(X_test))
-    rf.fit(X_train, y_train); acc_rf = accuracy_score(y_test, rf.predict(X_test))
-    gb.fit(X_train, y_train); acc_gb = accuracy_score(y_test, gb.predict(X_test))
-    return gb, acc_lr, acc_rf, acc_gb
+@st.cache_resource
+def load_model():
+    with open('model.pkl', 'rb') as f:
+        data = pickle.load(f)
+    return data['model'], data['acc_lr'], data['acc_rf'], data['acc_gb']
 
-model, acc_lr, acc_rf, acc_gb = load_and_train()
+model, acc_lr, acc_rf, acc_gb = load_model()
 
 # ============================================================
 # SIDEBAR
@@ -47,16 +32,15 @@ with st.sidebar:
     st.markdown('<div class="sidebar-title">⚡ Informations</div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    glucose     = st.slider("Glucose (mg/dL)",    0, 200, 148)
-    bmi         = st.slider("BMI",               0.0, 67.1, 33.6)
-    age         = st.slider("Âge",               21, 81, 50)
-    insulin     = st.slider("Insuline (µU/mL)",   0, 846, 80)
-    pregnancies = st.slider("Grossesses",         0, 17, 6)
-    blood_press = st.slider("Pression artérielle",0, 122, 72)
-    skin        = st.slider("Épaisseur peau",     0, 99, 35)
-    dpf         = st.slider("Facteur génétique",  0.0, 2.42, 0.627)
+    glucose     = st.slider("Glucose (mg/dL)",     0, 200, 148)
+    bmi         = st.slider("BMI",                0.0, 67.1, 33.6)
+    age         = st.slider("Âge",                21, 81, 50)
+    insulin     = st.slider("Insuline (µU/mL)",    0, 846, 80)
+    pregnancies = st.slider("Grossesses",          0, 17, 6)
+    blood_press = st.slider("Pression artérielle", 0, 122, 72)
+    skin        = st.slider("Épaisseur peau",      0, 99, 35)
+    dpf         = st.slider("Facteur génétique",   0.0, 2.42, 0.627)
 
-    # Metrics sidebar
     st.markdown("---")
     g_pct = int((glucose / 200) * 100)
     b_pct = int((bmi / 67.1) * 100)
@@ -95,7 +79,6 @@ with st.sidebar:
 st.markdown('<div class="main-title">🩺 Prédiction du Diabète</div>', unsafe_allow_html=True)
 st.markdown('<div class="main-sub">Pima Indians Diabetes Dataset</div>', unsafe_allow_html=True)
 
-# Accuracy big card
 st.markdown(f"""
 <div class="acc-big-card">
     <div>
@@ -113,7 +96,7 @@ if predict_btn:
     with st.spinner("Analyse en cours..."):
         time.sleep(1)
 
-    patient = np.array([[pregnancies, glucose, blood_press, skin, insulin, bmi, dpf, age]])
+    patient     = np.array([[pregnancies, glucose, blood_press, skin, insulin, bmi, dpf, age]])
     prediction  = model.predict(patient)[0]
     probabilite = model.predict_proba(patient)[0][1] * 100
 
