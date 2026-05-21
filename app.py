@@ -1,5 +1,7 @@
 import streamlit as st
-import pickle          # ← ajoute cette lignes
+import pickle       
+import numpy as np      # ← manquant (utilisé ligne np.array)
+import time   # ← ajoute cette lignes
 # ============================================================
 # CONFIG
 # ============================================================
