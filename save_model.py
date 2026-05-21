@@ -22,29 +22,24 @@ X_train, X_test, y_train, y_test = train_test_split(
 # ============================================================
 # ENTRAÎNER LES 3 MODÈLES
 # ============================================================
-lr = LogisticRegression(random_state=42, class_weight='balanced')
-rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+#lr = LogisticRegression(random_state=42, class_weight='balanced')
+#rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
 gb = GradientBoostingClassifier(n_estimators=100, random_state=42)
 
-lr.fit(X_train, y_train); acc_lr = accuracy_score(y_test, lr.predict(X_test))
-rf.fit(X_train, y_train); acc_rf = accuracy_score(y_test, rf.predict(X_test))
-gb.fit(X_train, y_train); acc_gb = accuracy_score(y_test, gb.predict(X_test))
+gb.fit(X_train, y_train)
 
-print(f"✅ Régression Logistique : {acc_lr*100:.2f}%")
-print(f"✅ Random Forest         : {acc_rf*100:.2f}%")
-print(f"✅ Gradient Boosting     : {acc_gb*100:.2f}%")
 
 # ============================================================
 # SAUVEGARDER DANS model.pkl
 # ============================================================
-data = {
-    'model': gb,
-    'acc_lr': acc_lr,
-    'acc_rf': acc_rf,
-    'acc_gb': acc_gb
-}
+#data = {
+    #'model': gb,
+   # 'acc_lr': acc_lr,
+  #  'acc_rf': acc_rf,
+ #   'acc_gb': acc_gb
+#}
 
-with open('model.pkl', 'wb') as f:
-    pickle.dump(data, f)
+with open('model_gb.pkl', 'wb') as f:
+    pickle.dump(gb, f)
 
 print("✅ model.pkl sauvegardé avec succès !")
