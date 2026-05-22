@@ -1,5 +1,5 @@
 import streamlit as st
-import pickle       
+import joblib       
 import numpy as np      
 import time  
 
@@ -26,7 +26,7 @@ def load_model():
     # Simulation ou chargement réel
     try:
         with open('model_gb.pkl', 'rb') as f:
-            data = pickle.load(f)
+            data = joblib.load(f)
         return data
     except FileNotFoundError:
         # Valeurs de secours pour le test si model.pkl n'est pas là
