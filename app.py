@@ -32,7 +32,7 @@ def load_model():
         # Valeurs de secours pour le test si model.pkl n'est pas là
         return None, 0.76, 0.78, 0.82
 
-model, acc_lr, acc_rf, acc_gb = load_model(), 76.62, 75.97, 77.27 ## ITO SOLOINA LE TENA IZY
+model, acc_lr, acc_rf, acc_gb = load_model(), 0.7662, 0.7597, 0.7727 ## ITO SOLOINA LE TENA IZY
 
 # ============================================================
 # SIDEBAR (Uniquement pour les entrées)
